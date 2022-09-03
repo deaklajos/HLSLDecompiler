@@ -15,6 +15,7 @@
 #include "util.h"
 #include "shader.h"
 #include "D3D_Shaders/stdafx.h"
+#include "D3D_Shaders/SignatureParser.cpp"
 
 using namespace std;
 
