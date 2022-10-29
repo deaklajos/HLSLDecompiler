@@ -874,14 +874,21 @@ public:
 		// Read list.
 		while (pos < size)
 		{
-			char name[256], type[16], format[16], dim[16], bind[16];
+			char name[256], type[16], format[16], dim[16], ID[16], bind[16], unbound[16];
 			int arraySize;
 			type[0] = 0;
-			int numRead = sscanf_s(c + pos, "// %s %s %s %s %s %d",
+			int numRead = sscanf_s(c + pos, "// %s %s %s %s %s %s %d",
 				name, UCOUNTOF(name), type, UCOUNTOF(type), format, UCOUNTOF(format), dim, UCOUNTOF(dim),
+				ID, UCOUNTOF(ID),
 				bind, UCOUNTOF(bind), &arraySize);
 
-			if (numRead != 6)
+			if (numRead != 7)
+				numRead = sscanf_s(c + pos, "// %s %s %s %s %s %s %s",
+					name, UCOUNTOF(name), type, UCOUNTOF(type), format, UCOUNTOF(format), dim, UCOUNTOF(dim),
+					ID, UCOUNTOF(ID),
+					bind, UCOUNTOF(bind), unbound, UCOUNTOF(unbound));
+
+			if (numRead != 7)
 				logDecompileError("Error parsing resource declaration: " + string(c + pos, 80));
 
 			int slot = 0;
