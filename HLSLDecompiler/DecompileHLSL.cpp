@@ -2029,18 +2029,23 @@ public:
 			//  This section was doing some char-by-char indexing into the search string 'right2', and has been
 			//  changed to just use sscanf_s as a more reliable way of parsing, although it's a risky change.
 			strPos = strstr(right2, "cb");
+			if (!strPos)
+				strPos = strstr(right2, "CB"); // SM5.1
 			if (strPos)
 			{
+				int dummy = 0;
 				int bufIndex = 0;
 				int bufOffset;
 				char regAndSwiz[opcodeSize];
-				
+
 				// By scanning these in this order, we are sure to cover every variant, without mismatches.
 				// We use the unusual format of [^+] for the string lookup because ReadStatement has already 
 				// crushed the spaces out of the input.
 
 				// Like: -cb2[r12.w+63].xyzx  as : -cb(bufIndex)[(regAndSwiz)+(bufOffset)]
-				if (sscanf_s(strPos, "cb%d[%[^+]+%d]", &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 3)
+				// Or SM5.1 like: -CB2[2][r12.w+63].xyzx  as : -cb(dummy)[(bufIndex)][(regAndSwiz)+(bufOffset)]
+				if (sscanf_s(strPos, "cb%d[%[^+]+%d]", &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 3 ||
+					sscanf_s(strPos, "CB%d[%d][%[^+]+%d]", &dummy, &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 4)
 				{
 					// Some constant buffers no longer have variable names, giving us generic names like cb0[23].
 					// The syntax doesn't work to use those names, so in this scenario, we want to just use the strPos name, unchanged.
@@ -2060,28 +2065,33 @@ public:
 					}
 				}
 				// Like: cb1[29].xyzx  Most common variant.  If a register, %d will fail.
-				else if (sscanf_s(strPos, "cb%d[%d]", &bufIndex, &bufOffset) == 2)
+				else if (sscanf_s(strPos, "cb%d[%d]", &bufIndex, &bufOffset) == 2 ||
+					sscanf_s(strPos, "CB%d[%d][%d]", &dummy, &bufIndex, &bufOffset) == 3)
 				{
 					regAndSwiz[0] = 0;
 				}
 				// Like: cb0[r0.w].xy
-				else if (sscanf_s(strPos, "cb%d[%s]", &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz)) == 2)
+				else if (sscanf_s(strPos, "cb%d[%s]", &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz)) == 2 ||
+					sscanf_s(strPos, "CB%d[%d][%s]", &dummy, &bufIndex, regAndSwiz, UCOUNTOF(regAndSwiz)) == 3)
 				{
 					bufOffset = 0;
 				}
 				// Like: icb[r0.w+0].xyzw
-				else if (sscanf_s(strPos, "cb[%[^+]+%d]", regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 2)
+				else if (sscanf_s(strPos, "cb[%[^+]+%d]", regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 2 ||
+					sscanf_s(strPos, "CB[%[^+]+%d]", regAndSwiz, UCOUNTOF(regAndSwiz), &bufOffset) == 2)
 				{
 					bufIndex = -1;		// -1 is used as 'index' for icb entries.
 				}
 				// Like: icb[22].w  doesn't seem to exist, but here for completeness.
-				else if (sscanf_s(strPos, "cb[%d]", &bufOffset) == 1)
+				else if (sscanf_s(strPos, "cb[%d]", &bufOffset) == 1 ||
+					sscanf_s(strPos, "CB[%d]", &bufOffset) == 1)
 				{
 					bufIndex = -1;		// -1 is used as 'index' for icb entries.
 					regAndSwiz[0] = 0;
 				}
 				// Like: icb[r1.z].xy
-				else if (sscanf_s(strPos, "cb[%s]", regAndSwiz, UCOUNTOF(regAndSwiz)) == 1)
+				else if (sscanf_s(strPos, "cb[%s]", regAndSwiz, UCOUNTOF(regAndSwiz)) == 1 ||
+					sscanf_s(strPos, "CB[%s]", regAndSwiz, UCOUNTOF(regAndSwiz)) == 1)
 				{
 					bufIndex = -1;		// -1 is used as 'index' for icb entries.
 					bufOffset = 0;
