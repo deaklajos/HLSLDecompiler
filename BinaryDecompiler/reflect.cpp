@@ -177,6 +177,12 @@ static const uint32_t* ReadResourceBinding(const uint32_t* pui32FirstResourceTok
     psBinding->ui32BindPoint = *pui32Tokens++;
     psBinding->ui32BindCount = *pui32Tokens++;
     psBinding->ui32Flags = *pui32Tokens++;
+	// sm5.1 2*32bit longer but only if non default space or unbound
+	// resources are used(might only be affected by the first one).
+	// Somewhere should be a flag which denotes this.
+	// TODO(deaklajos) Handle this better.
+	pui32Tokens++; // space
+	pui32Tokens++; // unknown
 
     return pui32Tokens;
 }
