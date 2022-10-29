@@ -4069,8 +4069,46 @@ public:
 
 		return 0;
 	}
-	//dx9
 
+	int GetSamplerIdFromOperand(const char* operand) {
+		char dummyString[opcodeSize];
+		int dummyInt;
+		int	samplerId;
+
+		if (sscanf_s(operand, "S%d[%d][%s]", &dummyInt, &samplerId, dummyString, UCOUNTOF(dummyString)) == 3)
+			return samplerId;
+
+		if (sscanf_s(operand, "S%d", &samplerId))
+			return samplerId;
+
+		if (sscanf_s(operand, "s%d", &samplerId))
+			return samplerId;
+
+		logDecompileError("Yeeeet in GetSamplerIdFromOperand : " + string(operand, 80));
+
+		return 0;
+	}
+
+	int GetTextureIdFromOperand(const char* operand) {
+		char dummyString[opcodeSize];
+		int dummyInt;
+		int	textureId;
+
+		if (sscanf_s(operand, "T%d[%d][%s]", &dummyInt, &textureId, dummyString, UCOUNTOF(dummyString)) == 3)
+			return textureId;
+
+		if (sscanf_s(operand, "T%d", &textureId))
+			return textureId;
+
+		if (sscanf_s(operand, "t%d", &textureId))
+			return textureId;
+
+		logDecompileError("Yeeeet in GetTextureIdFromOperand : " + string(operand, 80));
+
+		return 0;
+	}
+
+	//dx9
 	void ParseCode(Shader *shader, const char *c, size_t size)
 	{
 		mOutputRegisterValues.clear();
@@ -6017,9 +6055,8 @@ public:
 							remapTarget(op1);
 							applySwizzle(".xyzw", op2);
 							applySwizzle(op1, op3);
-							int textureId, samplerId;
-							sscanf_s(op3, "t%d.", &textureId);
-							sscanf_s(op4, "s%d", &samplerId);
+							int textureId = GetTextureIdFromOperand(op3);
+							int samplerId = GetSamplerIdFromOperand(op4);
 							truncateTexturePos(op2, mTextureType[textureId].c_str());
 							truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 							truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6048,9 +6085,8 @@ public:
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
 						applySwizzle(".x", fixImm(op5, instr->asOperands[4]));
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6075,9 +6111,8 @@ public:
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
 						applySwizzle(".x", fixImm(op5, instr->asOperands[4]));
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6103,9 +6138,8 @@ public:
 						applySwizzle(op1, op3);
 						applySwizzle(op1, fixImm(op5, instr->asOperands[4]));
 						applySwizzle(op1, fixImm(op6, instr->asOperands[5]));
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6130,9 +6164,8 @@ public:
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
 						applySwizzle(".x", fixImm(op5, instr->asOperands[4]));
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6158,9 +6191,8 @@ public:
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
 						applySwizzle(".x", fixImm(op5, instr->asOperands[4]));
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6186,8 +6218,7 @@ public:
 						remapTarget(op1);
 						applySwizzle(op1, op2);
 						applySwizzle(op1, op3);
-						int textureId;
-						sscanf_s(op2, "t%d.", &textureId);
+						int textureId = GetTextureIdFromOperand(op2);
 						sprintf(buffer, "  %s = %s.GetSamplePosition(%s);\n", writeTarget(op1),
 							mTextureNames[textureId].c_str(), ci(op3).c_str());
 						appendOutput(buffer);
@@ -6195,22 +6226,21 @@ public:
 						break;
 					}
 
-						// Missing opcode, used in FC4.  Similar to 'sample'
-						// lod dest[.mask], srcAddress[.swizzle], srcResource[.swizzle], srcSampler
-						// ret Object.CalculateLevelOfDetail(sampler_state S, float x);
-						// "lod r0.x, r0.xyzx, t2.y, s2" -> "r0.x = t2.CalculateLevelOfDetailUnclamped(s2, r0.xyz);"
-						// CalculateLevelOfDetailUnclamped compiles to t2.y, 
-						// CalculateLevelOfDetail compiles to t2.x
+					// Missing opcode, used in FC4.  Similar to 'sample'
+					// lod dest[.mask], srcAddress[.swizzle], srcResource[.swizzle], srcSampler
+					// ret Object.CalculateLevelOfDetail(sampler_state S, float x);
+					// "lod r0.x, r0.xyzx, t2.y, s2" -> "r0.x = t2.CalculateLevelOfDetailUnclamped(s2, r0.xyz);"
+					// CalculateLevelOfDetailUnclamped compiles to t2.y, 
+					// CalculateLevelOfDetail compiles to t2.x
 					case OPCODE_LOD:
 					{
 						remapTarget(op1);
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
-						char *clamped = strrchr(op3, '.') + 1;
+						char* clamped = strrchr(op3, '.') + 1;
 						if (*clamped == 'x')
 							sprintf(buffer, "  %s = %s.CalculateLevelOfDetail(%s, %s);\n", writeTarget(op1),
 								mTextureNames[textureId].c_str(), mSamplerNames[samplerId].c_str(), ci(op2).c_str());
@@ -6227,9 +6257,8 @@ public:
 						remapTarget(op1);
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						if (!instr->bAddressOffset)
 							sprintf(buffer, "  %s = %s.Gather(%s, %s)%s;\n", writeTarget(op1),
@@ -6252,9 +6281,8 @@ public:
 						remapTarget(op1);
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
-						int textureId, samplerId;
-						sscanf_s(op3, "t%d.", &textureId);
-						sscanf_s(op4, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op3);
+						int samplerId = GetSamplerIdFromOperand(op4);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
 						if (!instr->bAddressOffset)
 							sprintf(buffer, "  %s = %s.GatherCmp(%s, %s, %s)%s;\n", writeTarget(op1),
@@ -6281,11 +6309,10 @@ public:
 						applySwizzle(op1, op2);
 						applySwizzle(op1, op3);
 						applySwizzle(op1, op4);
-						int textureId, samplerId;
-						sscanf_s(op4, "t%d.", &textureId);
-						sscanf_s(op5, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op4);
+						int samplerId = GetSamplerIdFromOperand(op5);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
-						sprintf(buffer, "  %s = %s.Gather(%s, %s, %s)%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(), 
+						sprintf(buffer, "  %s = %s.Gather(%s, %s, %s)%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(),
 							mSamplerNames[samplerId].c_str(), ci(op2).c_str(), ci(op3).c_str(), strrchr(op4, '.'));
 						appendOutput(buffer);
 						removeBoolean(op1);
@@ -6299,29 +6326,28 @@ public:
 						applySwizzle(op1, op2);
 						applySwizzle(op1, op3);
 						applySwizzle(op1, op4);
-						int textureId, samplerId;
-						sscanf_s(op4, "t%d.", &textureId);
-						sscanf_s(op5, "s%d", &samplerId);
+						int textureId = GetTextureIdFromOperand(op4);
+						int samplerId = GetSamplerIdFromOperand(op5);
 						truncateTexturePos(op2, mTextureType[textureId].c_str());
-						sprintf(buffer, "  %s = %s.GatherCmp(%s, %s, %s, %s)%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(), 
+						sprintf(buffer, "  %s = %s.GatherCmp(%s, %s, %s, %s)%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(),
 							mSamplerComparisonNames[samplerId].c_str(), ci(op2).c_str(), ci(op6).c_str(), ci(op3).c_str(), strrchr(op4, '.'));
 						appendOutput(buffer);
 						removeBoolean(op1);
 						break;
 					}
 
-						// For the _aoffimmi format, this was picking up 0..15, instead of the necessary -8..7
-						// It's a 4 bit number being used in an int, hence missing negatives.
-						// This fix follows the form of the _Gather opcode above, but should maybe use the
-						// instr-> parameters after they are fixed.
-						// Fixed both _LD and LD_MS
+					// For the _aoffimmi format, this was picking up 0..15, instead of the necessary -8..7
+					// It's a 4 bit number being used in an int, hence missing negatives.
+					// This fix follows the form of the _Gather opcode above, but should maybe use the
+					// instr-> parameters after they are fixed.
+					// Fixed both _LD and LD_MS
 					case OPCODE_LD:
 					{
 						remapTarget(op1);
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
-						int textureId;
-						sscanf_s(op3, "t%d.", &textureId);
+						int textureId = GetTextureIdFromOperand(op3);
+
 						truncateTextureLoadPos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
@@ -6343,14 +6369,13 @@ public:
 						applySwizzle(".xyzw", op2);
 						applySwizzle(op1, op3);
 						applySwizzle(".x", fixImm(op4, instr->asOperands[3]), true);
-						int textureId;
-						sscanf_s(op3, "t%d.", &textureId);
+						int textureId = GetTextureIdFromOperand(op3);
 						truncateTextureLoadPos(op2, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op1, mTextureType[textureId].c_str());
 						truncateTextureSwiz(op3, mTextureType[textureId].c_str());
 						if (!instr->bAddressOffset)
 							sprintf(buffer, "  %s = %s.Load(%s, %s)%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(), ci(op2).c_str(), ci(op4).c_str(), strrchr(op3, '.'));
-						else{
+						else {
 							int offsetU = 0, offsetV = 0, offsetW = 0;
 							sscanf_s(statement, "ld_aoffimmi(%d,%d,%d", &offsetU, &offsetV, &offsetW);
 							sprintf(buffer, "  %s = %s.Load(%s, %s, int3(%d, %d, %d))%s;\n", writeTarget(op1), mTextureNames[textureId].c_str(), ci(op2).c_str(), ci(op4).c_str(),
